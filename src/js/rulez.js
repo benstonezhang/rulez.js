@@ -83,7 +83,8 @@
                 }
             ],
             guides: [],
-            guideSnapInterval: 10
+            guideSnapInterval: 10,
+            posTextOffset: 0
         };
         var getDefaultConfigCopy = function () {
             var copy = JSON.parse(JSON.stringify(defaultConfig));
@@ -146,6 +147,7 @@
         var size;
         var maxDistance = 0;
         var unitConversionRate;
+        var posTextOffset = 0;
 
         /**
          * Renders ruler inside svg element
@@ -199,7 +201,7 @@
                 var startTextPos = pixelCurrentPosition - offset;
                 for (var j = 0; j < textElements.length; j++) {
                     var textElement = textElements[j];
-                    var text = Math.round((startTextPos + (j - additionalDivisionsAmount * amountPerMaxDistance) * textConfig.pixelGap) * scale *100)/100;
+                    var text = (Math.round((startTextPos + (j - additionalDivisionsAmount * amountPerMaxDistance) * textConfig.pixelGap) * scale * 100) + posTextOffset * 100) / 100;
                     if (textConfig.showUnits) {
                         text = addUnits(text);
                     }
@@ -300,6 +302,10 @@
          */
         this.getUnitConversionRate = function () {
             return getUnitConversionRate();
+        };
+
+        this.setPosTextOffset = function (offset) {
+            posTextOffset = offset;
         };
 
         function deepCloneWithCopyingStyle(node) {
@@ -569,7 +575,7 @@
             textSvg.setAttribute(x, addUnits(pos));
             textSvg.setAttribute(y, addUnits(yPos));
             rotateText(textSvg, elementConfig);
-            textSvg.textContent = elementConfig.showUnits ? addUnits(pos) : pos;
+            textSvg.textContent = elementConfig.showUnits ? addUnits(pos + posTextOffset) : (pos + posTextOffset);
             if (elementConfig.centerText) {
                 textSvg.setAttribute('text-anchor', 'middle');
             }
